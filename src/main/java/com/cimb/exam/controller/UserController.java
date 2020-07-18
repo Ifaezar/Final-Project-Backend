@@ -136,6 +136,19 @@ public class UserController {
 		return userRepo.save(user);
 	}
 	
+	@PutMapping("/{username}/{oldPassword}/{newPassword}")
+	public User changePassword(@PathVariable String username, @PathVariable String oldPassword, @PathVariable String newPassword) {
+		User findUser = userRepo.findByUsername(username).get();
+		String encodedPassword = pwEncoder.encode(newPassword);
+		if(pwEncoder.matches(oldPassword, findUser.getPassword())) {
+			findUser.setPassword(encodedPassword);
+		}else {
+			  throw new RuntimeException("maaf passowrd yang anda masuukan salah");
+		}
+
+		return userRepo.save(findUser);
+	}
+	
 	@DeleteMapping("/{id}")
 	public void deleteUser(@PathVariable int id) {
 		userRepo.deleteById(id);

@@ -40,6 +40,16 @@ public class User {
 	@JsonIgnore
 	private List<GameLibrary> gameLibrary;
 	
+	public List<Wishlist> getWishlist() {
+		return wishlist;
+	}
+	public void setWishlist(List<Wishlist> wishlist) {
+		this.wishlist = wishlist;
+	}
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade	= CascadeType.ALL)
+	@JsonIgnore
+	private List<Wishlist> wishlist;
+	
 	public List<GameLibrary> getGameLibrary() {
 		return gameLibrary;
 	}

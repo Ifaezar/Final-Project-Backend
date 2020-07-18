@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cimb.exam.dao.CartRepo;
 import com.cimb.exam.dao.GameRepo;
+import com.cimb.exam.dao.PaketRepo;
 import com.cimb.exam.dao.UserRepo;
 import com.cimb.exam.entity.Cart;
 import com.cimb.exam.entity.Game;
+import com.cimb.exam.entity.Paket;
 import com.cimb.exam.entity.User;
 
 @RestController
@@ -35,6 +37,8 @@ public class CartController {
 	@Autowired
 	private CartRepo cartRepo;
 	
+	@Autowired
+	private PaketRepo paketRepo;
 	
 	@GetMapping
 	public Iterable<Cart> showAllCart(){
@@ -49,6 +53,22 @@ public class CartController {
 		gameRepo.save(findGame);
 		
 		cart.setGame(findGame);
+		cart.setUser(findUser);
+		return cartRepo.save(cart);
+	}
+	
+	@PostMapping("/addPacketToCart/{userId}/{packetId}")
+	public Cart addToPacketCart( @PathVariable int userId, @PathVariable int packetId, @RequestBody Cart cart) {
+		Paket findPaket = paketRepo.findById(packetId).get();
+		User findUser = userRepo.findById(userId).get();
+		
+		findPaket.getPaketDetail().forEach(val ->{
+			Game findGame = gameRepo.findById(val.getGame().getId()).get();
+			findGame.setStokUser((findGame.getStokUser() - cart.getQuantity()));
+			gameRepo.save(findGame);
+		});
+		
+		cart.setPaket(findPaket);
 		cart.setUser(findUser);
 		return cartRepo.save(cart);
 	}

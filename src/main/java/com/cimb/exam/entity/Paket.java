@@ -12,15 +12,37 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Paket {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	private String image;
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public List<Cart> getCart() {
+		return cart;
+	}
+
+	public void setCart(List<Cart> cart) {
+		this.cart = cart;
+	}
+
 	private int stock;
 	private int totalPrice;
 	private String paketName;
-
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "paket", cascade	= CascadeType.ALL)
+	@JsonIgnore
+	private List<Cart> cart;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "paket", cascade	= CascadeType.ALL)
 	private List<PaketDetail> paketDetail;

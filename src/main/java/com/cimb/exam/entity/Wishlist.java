@@ -9,19 +9,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Cart {
+public class Wishlist {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String edition;
-	private int quantity;
-	public int getQuantity() {
-		return quantity;
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinColumn(name ="user_id")
+	private User user;
+	
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinColumn(name ="game_id")
+	private Game game;
+
+	public int getId() {
+		return id;
 	}
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getEdition() {
@@ -32,33 +39,6 @@ public class Cart {
 		this.edition = edition;
 	}
 
-	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinColumn(name ="user_id")
-	private User user;
-	
-	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinColumn(name ="game_id")
-	private Game game;
-	
-	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinColumn(name ="paket_id")
-	private Paket paket;
-	
-	public Paket getPaket() {
-		return paket;
-	}
-
-	public void setPaket(Paket paket) {
-		this.paket = paket;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public User getUser() {
 		return user;
@@ -75,6 +55,4 @@ public class Cart {
 	public void setGame(Game game) {
 		this.game = game;
 	}
-
-	
 }
