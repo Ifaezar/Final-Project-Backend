@@ -140,6 +140,14 @@ public class UserController {
 		return userRepo.save(user);
 	}
 	
+	@PutMapping("/newPassword")
+	public User userNewPassword(@RequestBody User user) {
+		String encodedPassword = pwEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
+		return userRepo.save(user);
+	}
+	
+	
 	@PutMapping("/{username}/{oldPassword}/{newPassword}")
 	public User changePassword(@PathVariable String username, @PathVariable String oldPassword, @PathVariable String newPassword) {
 		User findUser = userRepo.findByUsername(username).get();
