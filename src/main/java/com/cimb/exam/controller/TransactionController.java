@@ -167,6 +167,7 @@ public class TransactionController {
 		}
 		
 		Message = "<h1> Terima Kasih sudah membeli di Epic Game </h1>";
+		Message += "<h1> Tanggal Transaksi : "+  findTransaction.getCheckoutTime() +" </h1>";
 		
 		findTransaction.getTransactionDetail().forEach(val ->{
 			val.getGame().setStokAdmin((val.getGame().getStokAdmin()- val.getQuantity()));
