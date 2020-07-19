@@ -79,15 +79,24 @@ public class UserController {
 	
 	@PostMapping
 	public User addUser(@RequestBody User user) {
-		String encodedPassword = pwEncoder.encode(user.getPassword());
-		user.setPassword(encodedPassword);
-		user.setRole("user");
-		user.setVerifikasi("false");
-		User saveUser = userRepo.save(user);
+		Optional<User> findUser = userRepo.findByUsername(user.getUsername());
+		Optional<User> findUserEmail = userRepo.findByEmail(user.getEmail());
 		
-		this.emailUtil.sendEmail(user.getEmail(), "Verifikasi Email", "<h1>Silahkan klik <a href = \"http://localhost:8080/users/sukses/"+user.getEmail()+"/" + user.getId() +"\">Link<a> untuk verifikasi Email Anda</h1>");
-		
-		return saveUser;
+		if(findUser.toString() != "Optional.empty") {
+			throw new RuntimeException("Username exists");
+		}else if(findUserEmail.toString() != "Optional.empty") {
+			throw new RuntimeException("Email exists");
+		}else {
+			String encodedPassword = pwEncoder.encode(user.getPassword());
+			user.setPassword(encodedPassword);
+			user.setRole("user");
+			user.setVerifikasi("false");
+			User saveUser = userRepo.save(user);
+			
+			this.emailUtil.sendEmail(user.getEmail(), "Verifikasi Email", "<h1>Silahkan klik <a href = \"http://localhost:8080/users/sukses/"+user.getEmail()+"/" + user.getId() +"\">Link<a> untuk verifikasi Email Anda</h1>");
+			
+			return saveUser;			
+		}
 	}
 	
 	@GetMapping("/sukses/{email}/{userId}")
