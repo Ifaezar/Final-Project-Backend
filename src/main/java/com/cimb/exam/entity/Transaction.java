@@ -59,6 +59,16 @@ public class Transaction {
 	@JoinColumn(name ="user_id")
 	private User user;
 	
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JoinColumn(name ="paket_id")
+	private Paket paket;
+	
+	public Paket getPaket() {
+		return paket;
+	}
+	public void setPaket(Paket paket) {
+		this.paket = paket;
+	}
 	public int getId() {
 		return id;
 	}

@@ -29,8 +29,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.cimb.exam.dao.GameRepo;
+import com.cimb.exam.dao.PaketRepo;
 import com.cimb.exam.dao.TransactionRepo;
 import com.cimb.exam.dao.UserRepo;
+import com.cimb.exam.entity.Paket;
 import com.cimb.exam.entity.Transaction;
 import com.cimb.exam.entity.User;
 import com.cimb.exam.util.EmailUtil;
@@ -52,15 +54,19 @@ public class TransactionController {
 	private GameRepo gameRepo;
 	
 	@Autowired
+	private PaketRepo paketRepo;
+	
+	@Autowired
 	private EmailUtil emailUtil;
 	
 	private String uploadPath = System.getProperty("user.dir") + "/src/main/resources/static/images/BuktiTrf";
 	private String Message;
 	
 	@GetMapping
-	public Iterable<Transaction> showAllTransaction(){
-		return transactionRepo.findAll();
+	public Iterable<Transaction> showAllTransaction(@RequestParam String name){
+		return transactionRepo.findByName(name);
 	}
+	
 	
 	@PostMapping("/{userId}/{totalPrice}")
 	public Transaction addToTransaction(@PathVariable int userId, @PathVariable int totalPrice, @RequestBody Transaction transaction, @RequestParam String checkoutTime){
@@ -68,6 +74,17 @@ public class TransactionController {
 		transaction.setTotal_price(totalPrice);
 		transaction.setUser(findUser);
 		transaction.setCheckoutTime(checkoutTime);
+		return transactionRepo.save(transaction);
+	}
+	
+	@PostMapping("/{userId}/{totalPrice}/{paketId}")
+	public Transaction addToTransactionPaket(@PathVariable int userId, @PathVariable int totalPrice, @PathVariable int paketId, @RequestBody Transaction transaction, @RequestParam String checkoutTime){
+		User findUser = userRepo.findById(userId).get();
+		Paket findPaket = paketRepo.findById(paketId).get();
+		transaction.setTotal_price(totalPrice);
+		transaction.setUser(findUser);
+		transaction.setCheckoutTime(checkoutTime);
+		transaction.setPaket(findPaket);
 		return transactionRepo.save(transaction);
 	}
 	
@@ -142,6 +159,12 @@ public class TransactionController {
 		Message ="";
 		findTransaction.setAcceptTime(acceptTime);
 		findTransaction.setStatus("Accept");
+		
+		if(findTransaction.getPaket() != null) {
+			Paket findPaket = paketRepo.findById(findTransaction.getPaket().getId()).get();
+			findPaket.setStock(findPaket.getStock() - 1);
+			paketRepo.save(findPaket);
+		}
 		
 		Message = "<h1> Terima Kasih sudah membeli di Epic Game </h1>";
 		

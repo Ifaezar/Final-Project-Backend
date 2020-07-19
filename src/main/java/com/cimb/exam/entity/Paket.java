@@ -46,6 +46,9 @@ public class Paket {
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "paket", cascade	= CascadeType.ALL)
 	private List<PaketDetail> paketDetail;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "paket", cascade	= CascadeType.ALL)
+	private List<Transaction> transaction;
 
 	public int getId() {
 		return id;

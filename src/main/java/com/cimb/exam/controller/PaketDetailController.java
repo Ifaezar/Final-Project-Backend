@@ -41,6 +41,8 @@ public class PaketDetailController {
 		Paket findPaket = paketRepo.findById(paketId).get();
 		Game findGame = gameRepo.findById(gameId).get();
 		
+		
+		
 		paketDetail.setGame(findGame);
 		paketDetail.setPaket(findPaket);
 		

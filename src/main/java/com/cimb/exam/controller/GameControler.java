@@ -20,8 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cimb.exam.dao.CategoryRepo;
 import com.cimb.exam.dao.GameRepo;
+import com.cimb.exam.dao.UserRepo;
 import com.cimb.exam.entity.Category;
 import com.cimb.exam.entity.Game;
+import com.cimb.exam.entity.User;
+import com.cimb.exam.util.EmailUtil;
 
 @RestController
 @RequestMapping("/game")
@@ -34,10 +37,21 @@ public class GameControler {
 	@Autowired
 	private CategoryRepo categoryRepo;
 	
+	@Autowired
+	private UserRepo userRepo;
+	
+	@Autowired
+	private EmailUtil emailUtil;
+	
 
 	@GetMapping
 	public Iterable<Game> showAllGame(){
 		return gameRepo.findAll();
+	}
+	
+	@GetMapping("/sold")
+	public Iterable<Game> showGameSold(){
+		return gameRepo.sortBySold();
 	}
 	
 	@GetMapping("/gamesPage")
@@ -125,6 +139,17 @@ public class GameControler {
 	@PutMapping("/edit/{stokAwal}")
 	public Game editGame(@PathVariable int stokAwal, @RequestBody Game game) {
 		Game findGame = gameRepo.findById(game.getId()).get();
+		List<User> findUser = userRepo.findAll();
+	
+		if(game.getStokUser() == 0) {
+			findUser.forEach(val ->{
+				val.getWishlist().forEach(value ->{
+					if(value.getGame().getId() == game.getId()) {
+						this.emailUtil.sendEmail(val.getEmail(), "Update Stock", "<h1>Yeay Game = " + game.getName() +" sudah ditambahkan Stoknya buruan beli sebelum kehabisan</h1>");
+					}
+				});
+			});
+		}
 		
 		if(stokAwal > game.getStokAdmin()) {
 			game.setStokUser(game.getStokUser() - (stokAwal - game.getStokAdmin()));
@@ -153,8 +178,8 @@ public class GameControler {
 	
 	
 	@GetMapping("/custom")
-	public Iterable<Game> customQueryGet(@RequestParam String name){
-		return gameRepo.findByName(name);
+	public Page<Game> customQueryGet(@RequestParam String name, Pageable pageable){
+		return gameRepo.findByName(name, pageable);
 	}
 	
 	

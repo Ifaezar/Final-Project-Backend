@@ -34,6 +34,8 @@ public class WishlistController {
 	@Autowired
 	private WishlistRepo wishlistRepo;
 	
+	String message;
+	
 	@PostMapping("/addTowishlist/{userId}/{gameId}")
 	public Wishlist addToCart( @PathVariable int userId, @PathVariable int gameId,@RequestBody Wishlist wishlist) {
 		Game findGame = gameRepo.findById(gameId).get();
@@ -50,9 +52,9 @@ public class WishlistController {
 		return findUser.getWishlist();
 	}
 	
-	
 	@DeleteMapping("/delete/{wishlistId}")
 	public void emptyCart(@PathVariable int wishlistId) {
 		wishlistRepo.deleteById(wishlistId);
 	}
+	
 }

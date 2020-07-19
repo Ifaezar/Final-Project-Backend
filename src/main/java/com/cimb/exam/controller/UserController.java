@@ -64,6 +64,7 @@ public class UserController {
 		return userRepo.findAll();
 	}
 	
+	
 	@GetMapping("/{id}")
 	public User showUserByID(@PathVariable int id){
 		User findUser = userRepo.findById(id).get();
@@ -121,18 +122,21 @@ public class UserController {
 	public User loginUser(@RequestBody User user) {
 		User findUser = userRepo.findByUsername(user.getUsername()).get();
 		
-		
-		if(pwEncoder.matches(user.getPassword(), findUser.getPassword())) {
-			return findUser;
+		if(findUser.getVerifikasi().equals("false")) {
+			throw new RuntimeException("Maaf mohon veifikasi email terlebih dahulu");
 		}else {
-			throw new RuntimeException("Maaf Password Salah");
+			if(pwEncoder.matches(user.getPassword(), findUser.getPassword())) {
+				return findUser;
+			}else {
+				throw new RuntimeException("Maaf Password Salah");
+			}
 		}
+		
+		
 	}
 	
 	@PutMapping("/editProfile")
 	public User userEdit(@RequestBody User user) {
-		String encodedPassword = pwEncoder.encode(user.getPassword());
-		user.setPassword(encodedPassword);
 		return userRepo.save(user);
 	}
 	
