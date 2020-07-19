@@ -171,7 +171,7 @@ public class TransactionController {
 		findTransaction.getTransactionDetail().forEach(val ->{
 			val.getGame().setStokAdmin((val.getGame().getStokAdmin()- val.getQuantity()));
 			val.getGame().setSold(val.getQuantity());
-			Message += "<h1> Game Name = " + val.getGame().getName()+ "jumlah = " + val.getQuantity() + "harga game = " + val.getPriceProduct() +"</h1>";
+			Message += "<h1> Game Name = " + val.getGame().getName()+ " jumlah = " + val.getQuantity() + " harga game = " + val.getPriceProduct() +"</h1>";
 			gameRepo.save(val.getGame());
 		});
 		

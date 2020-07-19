@@ -49,9 +49,10 @@ public class PaketController {
 	@PostMapping
 	public Paket addPaket(@RequestBody Paket paket) {
 		if(paket.getStock() == 0) {
-			throw new RuntimeException("Maaf mohon veifikasi email terlebih dahulu");
+			throw new RuntimeException("Stok paket Habis");
+		}else {
+			return paketRepo.save(paket);			
 		}
-		return paketRepo.save(paket);
 	}
 	
 	@PutMapping("/edit")
